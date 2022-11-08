@@ -1,7 +1,8 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const { urlencoded } = require("express");
-const cookieParser = require("cookie-parser")
+const cookieParser = require("cookie-parser");
+const cors = require("cors");
 
 const dbConnect = require("./config/db/dbConnect");
 const userRoutes = require("./routes/userRoutes");
@@ -12,7 +13,13 @@ const pageNotFound = require("./middleware/error/pageNotFound");
 dotenv.config();
 const app = express();
 
-app.use(cookieParser())
+app.use(
+  cors({
+    origin: "*",
+    methods: "GET,PUT,POST,DELETE",
+  })
+);
+app.use(cookieParser());
 app.use(express.json());
 app.use(urlencoded({ extended: true }));
 

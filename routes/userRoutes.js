@@ -2,7 +2,10 @@ const express = require("express");
 const crypto = require("crypto");
 
 const generateToken = require("../config/token/generateToken");
-const { verifyToken, verifyUser } = require("../middleware/auth/authMiddleware");
+const {
+  verifyToken,
+  verifyUser,
+} = require("../middleware/auth/authMiddleware");
 const HttpErrorHandler = require("../middleware/error/HttpErrorHandler");
 const User = require("../models/User");
 const sendEmail = require("../utils/sendEmail");
@@ -53,6 +56,7 @@ router.post("/login", async (req, res, next) => {
     const token = generateToken(existingUser);
     return res
       .cookie("access_token", token, {
+        // access by server only
         httpOnly: true,
       })
       .status(200)
@@ -64,6 +68,13 @@ router.post("/login", async (req, res, next) => {
   } catch (error) {
     return next(new HttpErrorHandler(error.message));
   }
+});
+
+router.post("/logout", async (req, res, next) => {
+  return res
+    .clearCookie("access_token")
+    .status(200)
+    .json({ message: "User Logged Out Successfully" });
 });
 
 router.post("/send-verification-mail", verifyToken, async (req, res, next) => {

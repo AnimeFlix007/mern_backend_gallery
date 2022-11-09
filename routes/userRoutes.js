@@ -45,7 +45,7 @@ router.post("/register", async (req, res, next) => {
 router.post("/login", async (req, res, next) => {
   const { email, password } = req.body;
   try {
-    const existingUser = await User.findOne({ email });
+    const existingUser = await User.findOne({ email }).populate("gallery");
     if (!existingUser) {
       return next(new HttpErrorHandler("User does not exists", 401));
     }
@@ -63,7 +63,7 @@ router.post("/login", async (req, res, next) => {
       .json({
         user: existingUser,
         token,
-        message: "User registered sucessfully",
+        message: "User logged In sucessfully",
       });
   } catch (error) {
     return next(new HttpErrorHandler(error.message));

@@ -13,12 +13,7 @@ const pageNotFound = require("./middleware/error/pageNotFound");
 dotenv.config();
 const app = express();
 
-app.use(
-  cors({
-    origin: "*",
-    methods: "GET,PUT,POST,DELETE",
-  })
-);
+app.use(cors());
 app.use(cookieParser());
 app.use(express.json());
 app.use(urlencoded({ extended: true }));

@@ -19,13 +19,11 @@ router.post(
   photoResize,
   async (req, res, next) => {
     const { id } = req.user
-    console.log(req.file.filename);
     const localPath = `public/images/${req.file.filename}`;
     try {
       const imgUpload = await cloudinaryUploading(
         path.join(__dirname, "..", localPath)
       );
-      console.log(imgUpload);
       const post = await Gallery.create({
         fileName: req.file.filename,
         user: id,

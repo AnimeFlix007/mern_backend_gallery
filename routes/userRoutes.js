@@ -51,23 +51,23 @@ router.post("/login", async (req, res, next) => {
     }
 
     const token = generateToken(existingUser);
-    return res
-      .cookie("access_token", token, {
-        // access by server only
-        httpOnly: true,
-      })
-      .status(200)
-      .json({
-        user: existingUser,
-        token,
-        message: "User logged In sucessfully",
-      });
+    res.cookie("access_token", token, {
+      // access by server only
+      httpOnly: true,
+      expires: new Date(Date.now() + 25891000000)
+    });
+    return res.status(200).json({
+      user: existingUser,
+      token,
+      message: "User logged In sucessfully",
+    });
   } catch (error) {
     return next(new HttpErrorHandler(error.message));
   }
 });
 
 router.post("/logout", async (req, res, next) => {
+  console.log('logout');
   return res
     .clearCookie("access_token")
     .status(200)
@@ -76,12 +76,13 @@ router.post("/logout", async (req, res, next) => {
 
 router.post("/send-verification-mail", verifyToken, async (req, res, next) => {
   const { id, email } = req.user;
+  console.log(id, email);
   const subject = "Node Js Team";
   console.log(email);
   try {
     const user = await User.findById(id);
     const verifyToken = await user.createAccountVerificationToken();
-    const message = `Verify your acount now in 10 mins or ignore this message <a href="http://localhost:5000/api/users/send-verification-mail/${verifyToken}">Click here to verify</a>`;
+    const message = `Verify your acount now in 10 mins or ignore this message <a href="http://localhost:3000/verify-account/${verifyToken}">Click here to verify</a>`;
     await user.save();
     console.log(verifyToken);
     await sendEmail(email, subject, message);
@@ -96,11 +97,10 @@ router.post("/send-verification-mail", verifyToken, async (req, res, next) => {
 router.post("/verify-account", verifyToken, async (req, res, next) => {
   const { token } = req.body;
   const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
-  console.log(hashedToken);
   try {
     const user = await User.findOne({
       accountVerificationToken: hashedToken,
-      accountVerificationTokenExpires: { $gt: new Date() },
+      accountVerificationTokenExpires: { $gt: Date.now() },
     });
     if (!user) {
       return next(new HttpErrorHandler("Token expired", 400));
@@ -118,7 +118,7 @@ router.get("/getallphotos", verifyToken, async (req, res, next) => {
   const userId = req.user.id;
   try {
     const user = await User.findById(userId).populate("gallery");
-    res.status(200).json({ user });
+    res.status(200).json({ images: user.gallery, message: "Fetched All Images" });
   } catch (error) {
     return next(new HttpErrorHandler());
   }

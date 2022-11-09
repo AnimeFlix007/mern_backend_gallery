@@ -23,6 +23,8 @@ const photoResize = async (req, res, next) => {
   if (!req.file) {
     return next();
   }
+  
+  console.log(req.file);
   req.file.filename = `image-${Date.now()}-${req.file.originalname}`;
   await sharp(req.file.buffer)
     .resize(250, 250)

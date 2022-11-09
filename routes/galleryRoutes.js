@@ -32,7 +32,7 @@ router.post(
         photo: imgUpload.secure_url,
       });
       fs.unlinkSync(localPath);
-      return res.status(200).json({ post });
+      return res.status(200).json({ post, message: "Image Successfully added to gallery" });
     } catch (error) {
       return next(new HttpErrorHandler(error.message));
     }

@@ -15,12 +15,4 @@ const verifyToken = (req, res, next) => {
   });
 };
 
-const verifyUser = (req, res, next) => {
-  if (req.user.id === req.params.id) {
-    next();
-  } else {
-    return next(new HttpErrorHandler("You are not authorized!", 401));
-  }
-};
-
-module.exports = { verifyToken, verifyUser };
+module.exports = { verifyToken };

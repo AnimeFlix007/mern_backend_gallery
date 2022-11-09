@@ -2,10 +2,7 @@ const express = require("express");
 const crypto = require("crypto");
 
 const generateToken = require("../config/token/generateToken");
-const {
-  verifyToken,
-  verifyUser,
-} = require("../middleware/auth/authMiddleware");
+const { verifyToken } = require("../middleware/auth/authMiddleware");
 const HttpErrorHandler = require("../middleware/error/HttpErrorHandler");
 const User = require("../models/User");
 const sendEmail = require("../utils/sendEmail");
@@ -50,7 +47,7 @@ router.post("/login", async (req, res, next) => {
       return next(new HttpErrorHandler("User does not exists", 401));
     }
     if ((await existingUser.isPassword(password)) === false) {
-      return next(new HttpErrorHandler("Password does not match", 401));
+      return next(new HttpErrorHandler("Invalid Password", 401));
     }
 
     const token = generateToken(existingUser);
@@ -117,9 +114,8 @@ router.post("/verify-account", verifyToken, async (req, res, next) => {
   }
 });
 
-router.get("/:id", verifyToken, verifyUser, async (req, res, next) => {
-  const userId = req.params.id;
-  validateId(userId, next);
+router.get("/getallphotos", verifyToken, async (req, res, next) => {
+  const userId = req.user.id;
   try {
     const user = await User.findById(userId).populate("gallery");
     res.status(200).json({ user });

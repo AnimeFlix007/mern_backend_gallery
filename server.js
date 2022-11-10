@@ -15,7 +15,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://mern-gallery-anime-app.onrender.com"],
+    origin: "https://animixgallery.vercel.app/",
     methods: ["GET", "PUT", "POST", "DELETE"],
     credentials: true,
   })

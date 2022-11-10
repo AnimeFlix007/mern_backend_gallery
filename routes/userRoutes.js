@@ -79,7 +79,7 @@ router.post("/send-verification-mail", verifyToken, async (req, res, next) => {
   try {
     const user = await User.findById(id);
     const verifyToken = await user.createAccountVerificationToken();
-    const message = `Verify your acount now in 10 mins or ignore this message <a href="https://animixplay-gallery-frontend.com/verify-account/${verifyToken}">Click here to verify</a>`;
+    const message = `Verify your acount now in 10 mins or ignore this message <a href="https://animixplay-gallery-frontend.onrender.com/verify-account/${verifyToken}">Click here to verify</a>`;
     await user.save();
     console.log(verifyToken);
     await sendEmail(email, subject, message);

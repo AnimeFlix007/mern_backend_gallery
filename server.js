@@ -15,7 +15,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "https://galleryanimix-app.onrender.com",
+    origin: "*",
     methods: ["GET", "PUT", "POST", "DELETE"],
     credentials: true,
   })

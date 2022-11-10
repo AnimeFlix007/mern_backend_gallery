@@ -54,9 +54,7 @@ router.post("/login", async (req, res, next) => {
     res.cookie("access_token", token, {
       // access by server only
       httpOnly: true,
-      expires: new Date(Date.now() + 25891000000),
-      secure: true,
-      sameSite: "none"
+      expires: new Date(Date.now() + 25891000000)
     });
     return res.status(200).json({
       user: existingUser,
@@ -71,11 +69,7 @@ router.post("/login", async (req, res, next) => {
 router.post("/logout", async (req, res, next) => {
   console.log("logout");
   return res
-    .clearCookie("access_token", {
-      httpOnly: true,
-      secure: true,
-      sameSite: "none"
-    })
+    .clearCookie("access_token")
     .status(200)
     .json({ message: "User Logged Out Successfully" });
 });

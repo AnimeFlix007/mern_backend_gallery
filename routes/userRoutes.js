@@ -67,7 +67,6 @@ router.post("/login", async (req, res, next) => {
 });
 
 router.post("/logout", async (req, res, next) => {
-  console.log("logout");
   return res
     .clearCookie("access_token")
     .status(200)
@@ -82,7 +81,9 @@ router.post("/send-verification-mail", verifyToken, async (req, res, next) => {
     const verifyToken = await user.createAccountVerificationToken();
     const message = `Verify your acount now in 10 mins or ignore this message <a href="http://localhost:3000/verify-account/${verifyToken}">Click here to verify</a>`;
     await user.save();
+    console.log(verifyToken);
     await sendEmail(email, subject, message);
+    console.log("ok");
     return res
       .status(200)
       .json({

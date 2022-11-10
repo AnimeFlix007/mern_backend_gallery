@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const HttpErrorHandler = require("../error/HttpErrorHandler");
 
 const verifyToken = (req, res, next) => {
-  const token = req?.cookies?.access_token;
+  const token = req?.cookies?.access_token
   if (!token) {
     return next(new HttpErrorHandler("User unauthenticated", 401));
   }

@@ -13,13 +13,27 @@ const pageNotFound = require("./middleware/error/pageNotFound");
 dotenv.config();
 const app = express();
 
-app.use(
-  cors({
-    origin: "*",
-    methods: ["GET", "PUT", "POST", "DELETE"],
-    credentials: true,
-  })
-);
+
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "https://animixgallery.vercel.app");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Auhorization"
+  );
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, DELETE"
+  );
+  next();
+});
+
+// app.use(
+//   cors({
+//     origin: "https://animixgallery.vercel.app",
+//     methods: ["GET", "PUT", "POST", "DELETE"],
+//     credentials: true,
+//   })
+// );
 app.use(cookieParser());
 app.use(express.json());
 app.use(urlencoded({ extended: true }));

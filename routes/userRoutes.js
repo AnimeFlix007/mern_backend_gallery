@@ -54,7 +54,7 @@ router.post("/login", async (req, res, next) => {
     res.cookie("access_token", token, {
       // access by server only
       httpOnly: true,
-      expires: new Date(Date.now() + 25891000000)
+      expires: new Date(Date.now() + 25891000000),
     });
     return res.status(200).json({
       user: existingUser,
@@ -67,7 +67,7 @@ router.post("/login", async (req, res, next) => {
 });
 
 router.post("/logout", async (req, res, next) => {
-  console.log('logout');
+  console.log("logout");
   return res
     .clearCookie("access_token")
     .status(200)
@@ -76,38 +76,45 @@ router.post("/logout", async (req, res, next) => {
 
 router.post("/send-verification-mail", verifyToken, async (req, res, next) => {
   const { id, email } = req.user;
-  console.log(id, email);
   const subject = "Node Js Team";
-  console.log(email);
   try {
     const user = await User.findById(id);
     const verifyToken = await user.createAccountVerificationToken();
     const message = `Verify your acount now in 10 mins or ignore this message <a href="http://localhost:3000/verify-account/${verifyToken}">Click here to verify</a>`;
     await user.save();
-    console.log(verifyToken);
     await sendEmail(email, subject, message);
     return res
       .status(200)
-      .json({ url: message, message: "mail has been send" });
+      .json({
+        url: message,
+        message: "E-mail has been send to your registered G-mail account",
+      });
   } catch (error) {
     return next(new HttpErrorHandler(error.message));
   }
 });
 
-router.post("/verify-account", verifyToken, async (req, res, next) => {
+router.put("/verify-account", verifyToken, async (req, res, next) => {
   const { token } = req.body;
   const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
   try {
-    const user = await User.findOne({
-      accountVerificationToken: hashedToken,
-      accountVerificationTokenExpires: { $gt: Date.now() },
-    });
+    const user = await User.findOneAndUpdate(
+      {
+        accountVerificationToken: hashedToken,
+        accountVerificationTokenExpires: { $gt: Date.now() },
+      },
+      {
+        isAccountVerified: true,
+        accountVerificationToken: undefined,
+        accountVerificationTokenExpires: undefined,
+      },
+      {
+        new: true,
+      }
+    );
     if (!user) {
       return next(new HttpErrorHandler("Token expired", 400));
     }
-    user.isAccountVerified = true;
-    user.accountVerificationToken = undefined;
-    user.accountVerificationTokenExpires = undefined;
     res.status(200).json({ message: "account verified", user });
   } catch (error) {
     return next(new HttpErrorHandler());
@@ -118,7 +125,9 @@ router.get("/getallphotos", verifyToken, async (req, res, next) => {
   const userId = req.user.id;
   try {
     const user = await User.findById(userId).populate("gallery");
-    res.status(200).json({ images: user.gallery, message: "Fetched All Images" });
+    res
+      .status(200)
+      .json({ images: user.gallery, message: "Fetched All Images" });
   } catch (error) {
     return next(new HttpErrorHandler());
   }

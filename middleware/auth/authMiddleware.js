@@ -3,8 +3,6 @@ const HttpErrorHandler = require("../error/HttpErrorHandler");
 
 const verifyToken = (req, res, next) => {
   const token = req?.cookies?.access_token;
-  console.log(req.cookies);
-  console.log("token",token);
   if (!token) {
     return next(new HttpErrorHandler("User unauthenticated", 401));
   }

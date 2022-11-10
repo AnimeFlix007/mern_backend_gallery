@@ -15,7 +15,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "https://animixgallery.vercel.app/",
+    origin: ["https://animixgallery.vercel.app"],
     methods: ["GET", "PUT", "POST", "DELETE"],
     credentials: true,
   })
